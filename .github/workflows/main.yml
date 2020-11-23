@@ -1,0 +1,50 @@
+name: JSDoc Build and Push
+
+on:
+  push:
+    branches:
+    - master
+    - v2
+  pull_request:
+    branches:
+    - master
+    - v2
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Build JSDoc and push
+      run: |
+        npm install
+        mkdir -p docs
+        cd docs
+        git init
+        git remote add origin https://github.com/Mattx8y/wired-js.git
+        git config user.email "jsdocbot@gmail.com"
+        git config user.name "JSDocBot"
+        git fetch origin gh-pages
+        git pull origin gh-pages
+        cd ..
+        node build.js
+        npm run docs --if-present
+        cd docs
+        git add .
+        git commit -m "Build JSDoc"
+        git branch gh-pages
+        header=$(echo -n "ad-m:${GH_TOKEN}" | base64)
+        git -c http.extraheader="AUTHORIZATION: basic $header" push -u origin gh-pages
+      env:
+        CI: true
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
