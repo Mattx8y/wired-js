@@ -27,7 +27,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: Build JSDoc and push
       run: |
-        npm install
+        npm install jsdoc minami
         mkdir -p docs
         cd docs
         git init

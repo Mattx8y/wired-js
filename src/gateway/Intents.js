@@ -2,6 +2,7 @@
  * List of Gateway Intents
  * @readonly
  * @enum {number}
+ * @property {number} ALL Shorthand for all intents
  */
 const Intents = {
   GUILDS: 1 << 0,
@@ -19,12 +20,7 @@ const Intents = {
   DIRECT_MESSAGES: 1 << 12,
   DIRECT_MESSAGE_REACTIONS: 1 << 13,
   DIRECT_MESSAGE_TYPING: 1 << 14,
-
-  /**
-   * Shorthand for all intents
-   * @type {number}
-   * @readonly
-   */
+  
   get ALL() {
     let bits = 0;
     for (intent in this) {
