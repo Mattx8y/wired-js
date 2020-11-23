@@ -1,11 +1,11 @@
 {
   "plugins": ["plugins/markdown"],
   "source": {
-    "include": ["src/", "src/rest/", "src/gateway/", "package.json", "README.md"]
+    "include": ["src/", "src/rest/", "src/gateway/", "src/shards", "package.json", "README.md"]
   },
   "opts": {
     "destination": "./docs/",
-	"template": "./node_modules/minami"
+    "template": "./node_modules/minami"
   },
   "templates": {
     "cleverLinks": true,
