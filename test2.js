@@ -1,1 +1,0 @@
-console.log(process.env.SHARD_ID, process.env.SHARD_COUNT);
