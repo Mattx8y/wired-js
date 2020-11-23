@@ -1,5 +1,5 @@
 {
-  "name": "alexwire",
+  "name": "jscord",
   "version": "1.0.0",
   "description": "All-new discord library written in JS",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Mattx8y/alexwire-js.git"
+    "url": "git+https://github.com/Mattx8y/wired-js.git"
   },
   "keywords": [
     "discord",
@@ -18,9 +18,9 @@
   "author": "Mattx8y",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Mattx8y/alexwire-js/issues"
+    "url": "https://github.com/Mattx8y/wired-js/issues"
   },
-  "homepage": "https://github.com/Mattx8y/alexwire-js#readme",
+  "homepage": "https://github.com/Mattx8y/wired-js#readme",
   "dependencies": {
     "ws": "^7.4.0"
   },
