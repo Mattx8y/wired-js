@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>gateway/Intents.js - Documentation</title>
+    <title>shards/ShardManager.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">gateway/Intents.js</h1>
+    <h1 class="page-title">shards/ShardManager.js</h1>
     
 
     
@@ -39,39 +39,57 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * List of Gateway Intents
- * @readonly
- * @enum {number}
- */
-const Intents = {
-  GUILDS: 1 &lt;&lt; 0,
-  GUILD_MEMBERS: 1 &lt;&lt; 1,
-  GUILD_BANS: 1 &lt;&lt; 2,
-  GUILD_EMOJIS: 1 &lt;&lt; 3,
-  GUILD_INTEGRATIONS: 1 &lt;&lt; 4,
-  GUILD_WEBHOOKS: 1 &lt;&lt; 5,
-  GUILD_INVITES: 1 &lt;&lt; 6,
-  GUILD_VOICE_STATES: 1 &lt;&lt; 7,
-  GUILD_PRESENCES: 1 &lt;&lt; 8,
-  GUILD_MESSAGES: 1 &lt;&lt; 9,
-  GUILD_MESSAGE_REACTIONS: 1 &lt;&lt; 10,
-  GUILD_MESSAGE_TYPING: 1 &lt;&lt; 11,
-  DIRECT_MESSAGES: 1 &lt;&lt; 12,
-  DIRECT_MESSAGE_REACTIONS: 1 &lt;&lt; 13,
-  DIRECT_MESSAGE_TYPING: 1 &lt;&lt; 14,
+            <pre class="prettyprint source linenums"><code>const RESTManager = require("../rest/RESTManager.js");
 
-  get ALL() {
-    let bits = 0;
-    for (intent in this) {
-      if (intent === "ALL") continue;
-      bits |= this[intent];
-    }
-    return bits;
-  } 
+const child_process = require("child_process");
+
+/**
+ * Manages the creation of shards
+ */
+class ShardManager {
+  /**
+   * Creates a ShardManager
+   * @param {string} token The client's token
+   * @param {string} clientPath The path the the client's javascript file
+   */
+  constructor(token, clientPath) {
+    this.token = token;
+    this.clientPath = clientPath;
+    this.restManager = new RESTManager(token);
+  }
+
+  /**
+   * Spawns a shard
+   * @param {number} id The ID of the shard
+   * @param {number} count The total number of shards
+   * @param {string} url The base gateway URL
+   * @private
+   */
+  spawn(id, count, url) {
+    child_process.spawn("node", [this.clientPath], {
+      stdio: "inherit",
+      env: Object.assign({
+        SHARD_ID: id,
+        SHARD_COUNT: count,
+        GATEWAY_URL: url,
+        DISCORD_TOKEN: this.token
+      }, process.env)
+    }).on("end", () => this.spawn(id, count, url));
+  }
+
+  /**
+   * Starts spawning shards
+   */
+  start() {
+    this.restManager.getGatewayBot().then((info) => {
+      for (let i = 0; i &lt; info.shards; i++) {
+        this.spawn(i, info.shards, info.url);
+      }
+    });
+  }
 }
 
-module.exports = Intents;</code></pre>
+module.exports = ShardManager;</code></pre>
         </article>
     </section>
 
