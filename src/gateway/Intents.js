@@ -20,6 +20,11 @@ const Intents = {
   DIRECT_MESSAGE_REACTIONS: 1 << 13,
   DIRECT_MESSAGE_TYPING: 1 << 14,
 
+  /**
+   * Shorthand for all intents
+   * @type {number}
+   * @readonly
+   */
   get ALL() {
     let bits = 0;
     for (intent in this) {
