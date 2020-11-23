@@ -2,7 +2,7 @@
  * List of Gateway Intents
  * @readonly
  * @enum {number}
- * @property {number} ALL Shorthand for all intents
+ * @property {number} ALL Shorthand for every intent
  */
 const Intents = {
   GUILDS: 1 << 0,
