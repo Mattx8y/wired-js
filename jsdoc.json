@@ -1,7 +1,7 @@
 {
   "plugins": ["plugins/markdown"],
   "source": {
-    "include": ["src/", "src/rest/", "src/gateway/", "src/shards", "package.json", "README.md"]
+    "include": ["src/", "src/rest/", "src/gateway/", "src/shards/", "src/struct/", "package.json", "README.md"]
   },
   "opts": {
     "destination": "./docs/",

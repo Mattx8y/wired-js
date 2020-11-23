@@ -1,6 +1,7 @@
 const {EventEmitter} = require("events");
 const GatewayConnection = require("./gateway/GatewayConnection.js");
 const RESTManager = require("./rest/RESTManager.js");
+const Guild = require("./struct/Guild.js");
 
 /**
  * The options for the client
@@ -44,6 +45,33 @@ class Client extends EventEmitter {
      * @private
      */
     this.gatewayConnection = new GatewayConnection(options.token, options.intents);
+
+    /**
+     * The guilds the client is in
+     * @type {Map<Guild>}
+     */
+    this.guilds = new Map();
+
+    this.gatewayConnection.on("READY", data => {
+      data.guilds.forEach(guild => {
+        this.guilds.set(guild.id, new Guild(this, guild));
+      });
+      setTimeout(() => console.log(this.guilds), 5000);
+    });
+
+    this.gatewayConnection.on("GUILD_CREATE", data => {
+      let guild;
+      if (this.guilds.has(data.id)) {
+        guild = this.guilds.get(data.id);
+        guild.updateData(data);
+        this.emit("guildAvailable", guild);
+      } else {
+        guild = new Guild(this, data);
+        this.guilds.set(data.id, guild);
+        this.emit("guildCreate", guild);
+      }
+      this.guilds.set(data.id, guild);
+    });
 
   }
 
