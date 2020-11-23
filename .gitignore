@@ -105,3 +105,7 @@ dist
 
 # Repl.it configuration
 .replit
+
+# Used for testing lib
+test.js
+test2.js
