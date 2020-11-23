@@ -2,11 +2,28 @@ const https = require("https");
 
 const packageInfo = require("../../package.json");
 
+/**
+ * Manages communications to the REST api
+ * @private
+ */
 class RESTManager {
+  /**
+   * Creates a RESTManager
+   * @param {string} token The client's token
+   * @private
+   */
   constructor(token) {
     this.token = token;
   }
 
+  /**
+   * Sends an HTTP request
+   * @param {string} path The path to send the request to
+   * @param {string} [method="GET"] The method to use
+   * @param {*} [body] The body of the request
+   * @returns Promise<*> The response to the request
+   * @private
+   */
   request(path, method = "GET", body) {
     return new Promise((resolve, reject) => {
       const opts = {
@@ -33,6 +50,11 @@ class RESTManager {
     });
   }
 
+  /**
+   * GETs /gateway/bot
+   * @returns {Promise<Object>} The response
+   * @private
+   */
   getGatewayBot() {
     return this.request("/gateway/bot");
   }
