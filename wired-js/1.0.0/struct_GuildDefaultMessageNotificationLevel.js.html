@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>shards/ShardManager.js - Documentation</title>
+    <title>struct/GuildDefaultMessageNotificationLevel.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">shards/ShardManager.js</h1>
+    <h1 class="page-title">struct/GuildDefaultMessageNotificationLevel.js</h1>
     
 
     
@@ -39,57 +39,17 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>const RESTManager = require("../rest/RESTManager.js");
-
-const child_process = require("child_process");
-
-/**
- * Manages the creation of shards
+            <pre class="prettyprint source linenums"><code>/**
+ * List of default message notification levels
+ * @readyonly
+ * @enum {number}
  */
-class ShardManager {
-  /**
-   * Creates a ShardManager
-   * @param {string} token The client's token
-   * @param {string} clientPath The path the the client's javascript file
-   */
-  constructor(token, clientPath) {
-    this.token = token;
-    this.clientPath = clientPath;
-    this.restManager = new RESTManager(token);
-  }
-
-  /**
-   * Spawns a shard
-   * @param {number} id The ID of the shard
-   * @param {number} count The total number of shards
-   * @param {string} url The base gateway URL
-   * @private
-   */
-  spawn(id, count, url) {
-    child_process.spawn("node", [this.clientPath], {
-      stdio: "inherit",
-      env: Object.assign({
-        SHARD_ID: id,
-        SHARD_COUNT: count,
-        GATEWAY_URL: url,
-        DISCORD_TOKEN: this.token
-      }, process.env)
-    }).on("end", () => this.spawn(id, count, url));
-  }
-
-  /**
-   * Starts spawning shards
-   */
-  start() {
-    this.restManager.getGatewayBot().then((info) => {
-      for (let i = 0; i &lt; info.shards; i++) {
-        this.spawn(i, info.shards, info.url);
-      }
-    });
-  }
+const GuildDefaultMessageNotificationLevel = {
+  ALL_MESSAGES: 0,
+  ONLY_MENTIONS: 1
 }
 
-module.exports = ShardManager;</code></pre>
+module.exports = GuildDefaultMessageNotificationLevel;</code></pre>
         </article>
     </section>
 
