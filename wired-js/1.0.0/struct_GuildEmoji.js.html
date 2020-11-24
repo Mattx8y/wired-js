@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Client.js - Documentation</title>
+    <title>struct/GuildEmoji.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Client.js</h1>
+    <h1 class="page-title">struct/GuildEmoji.js</h1>
     
 
     
@@ -39,149 +39,98 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>const {EventEmitter} = require("events");
-const GatewayConnection = require("./gateway/GatewayConnection.js");
-const RESTManager = require("./rest/RESTManager.js");
-const Guild = require("./struct/Guild.js");
+            <pre class="prettyprint source linenums"><code>const User = require("./User.js");
 
 /**
- * The options for the client
- * @typedef {Object} ClientOptions
- * @property {string} token The token for the client
- * @property {Intents[]} intents The intents for the cient
+ * Represents an emoji on Discord
  */
-
-/**
- * Twitter Snowflake, used for IDs on Discord
- * @typedef {string} Snowflake
- */
-
-/**
- * The main Client class
- */
-class Client extends EventEmitter {
+class GuildEmoji {
   /**
-   * Creates a new Client
-   * @param {ClientOptions} options The options for the client.
+   * Creates a GuildEmoji object
+   * @param {Client} client The client that initalized this
+   * @param {Guild} guild The guild this emoji belongs to 
+   * @parma {Object} data The raw data of the emoji
    */
-  constructor(options = {}) {
-    super();
-    if (!options.token) options.token = process.env.DISCORD_TOKEN;
-    if (!options.token) 
-      throw new TypeError("No token was specified.");
-    if (!options.token || !(options.intents instanceof Array) || options.intents.length === 0) 
-      throw new TypeError("No intents were specified");
-    
+  constructor(client, guild, data) {
     /**
-     * The token of the client
-     * @type {string}
+     * The client that initalized this
+     * @type {Client}
      */
-    this.token = options.token;
-    
-    /**
-     * The RESTManager for the client
-     * @type {RESTManager}
-     * @private
-     */
-    this.restManager = new RESTManager(options.token);
-    
-    /**
-     * The GatewayConnection for the client
-     * @type {GatewayConnection}
-     * @private
-     */
-    this.gatewayConnection = new GatewayConnection(options.token, options.intents);
+    this.client = client;
 
     /**
-     * The guilds the client is in
-     * @type {Map&lt;Snowflake, Guild>}
+     * The guild that this emoji is a part of
+     * @type {Guild}
      */
-    this.guilds = new Map();
+    this.guild = guild;
 
     /**
-     * All the users that the client has cached
-     * @type {Map&lt;Snowflake, User>}
+     * The ID of this emoji
+     * @type {Snowflake}
      */
-    this.users = new Map();
+    this.id = data.id;
 
-    this.gatewayConnection.on("READY", data => {
-      data.guilds.forEach(guild => {
-        this.guilds.set(guild.id, new Guild(this, guild));
-      });
-    });
-
-    this.gatewayConnection.on("GUILD_CREATE", data => {
-      let guild;
-      if (this.guilds.has(data.id)) {
-        guild = this.guilds.get(data.id);
-        guild.updateData(data);
-
-        /**
-         * Emitted when a guild becomes available
-         * @event Client#guildAvailable
-         * @param {Guild} guild The guild
-         */
-        this.emit("guildAvailable", guild);
-      } else {
-        guild = new Guild(this, data);
-        this.guilds.set(data.id, guild);
-
-        /**
-         * Emitted when the client joins a guild
-         * @event Client#guildCreate
-         * @param {Guild} guild The guild
-         */
-        this.emit("guildCreate", guild);
-      }
-      console.log(guild);
-    });
-
-    this.gatewayConnection.on("GUILD_UPDATE", data => {
-      let guild = this.guilds.get(data.id);
-      guild.updateData(data);
-      
-      /**
-       * Emitted when a guild is updated
-       * @event Client#guildUpdate
-       * @param {Guild} guild The guild
-       */
-      this.emit("guildUpdate", guild);
-    });
-
-    this.gatewayConnection.on("GUILD_DELETE", data => {
-      let guild = this.guilds.get(data.id);
-      if (typeof data.available === "undefined") {
-        this.guilds.delete(data.id);
-
-        /**
-         * Emitted when the client leaves a guild
-         * @event Client#guildDelete
-         * @param {Guild} guild The guild
-         */
-        this.emit("guildDelete", guild);
-      } else {
-        guild.updateData(guild);
-
-        /**
-         * Emitted when a guild becomes unavailable
-         * @event Client#guildUnavailable
-         * @param {Guild} guild The guild
-         */
-        this.emit("guildUnavailable", guild);
-      }
-    });
-
+    this.updateData(data);
   }
 
   /**
-   * Logs into the client
+   * Updates the emoji's information with new data
+   * @param {Object} data The raw data
+   * @private
    */
-  login() {
-    this.gatewayConnection.login();
+  updateData(data) {
+    /**
+     * The name of this emoji
+     * @type {string}
+     */
+    this.name = data.name;
+
+    /**
+     * Roles that this emoji is whitelisted to
+     * @type {Map&lt;Snowflake, Role>}
+     */
+    this.whitelistedRoles = data.roles.map(role => this.guild.roles.get(role));
+
+    /**
+     * The user that created this emoji
+     * @type {User}
+     */
+    this.user;
+    if (this.client.users.has(data.user.id)) {
+      this.user = this.client.users.get(data.user.id);
+      this.user.updateData(data.user);
+    } else {
+      this.user = new User(this.client, data.user);
+      this.client.users.set(data.user.id, this.user);
+    }
+
+    /**
+     * Whether or not this emoji must be wrapped in colons
+     * @type {boolean}
+     */
+    this.requiresColons = data.require_colons;
+
+    /**
+     * Whether or not this emoji is managed
+     * @type {boolean}
+     */
+    this.managed = data.managed;
+
+    /**
+     * Whether or not this emoji is animated
+     * @type {boolean}
+     */
+    this.animated = data.animated;
+
+    /**
+     * Whether or not this emoji can be used
+     * @type {boolean}
+     */
+    this.available = data.available;
   }
 }
 
-module.exports = Client;</code></pre>
+module.exports = GuildEmoji;</code></pre>
         </article>
     </section>
 
