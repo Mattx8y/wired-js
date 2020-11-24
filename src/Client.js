@@ -5,7 +5,7 @@ const Guild = require("./struct/Guild.js");
 
 /**
  * The options for the client
- * @typedef {Object} ClientOtions
+ * @typedef {Object} ClientOptions
  * @property {string} token The token for the client
  * @property {Intents[]} intents The intents for the cient
  */
