@@ -29,6 +29,15 @@ class Role {
      */
     this.id = data.id;
 
+    this.updateData(data);
+  }
+
+  /**
+   * Updates a role's data with new information
+   * @param {Object} data The raw data
+   * @private
+   */
+  updateData(data) {
     /**
      * The name of the role
      * @type {string}
@@ -55,11 +64,9 @@ class Role {
 
     /**
      * The permissions this role has
-     * @type {Permissions<Permissions#flags>}
+     * @type {Permissions<PermissionFlags>}
      */
     this.permissions = new Permissions(data.permissions);
-
-    console.log(this.id, this.permissions);
 
     /**
      * Whether this role is managed by an integration

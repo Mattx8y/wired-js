@@ -56,7 +56,6 @@ class Client extends EventEmitter {
       data.guilds.forEach(guild => {
         this.guilds.set(guild.id, new Guild(this, guild));
       });
-      setTimeout(() => console.log(this.guilds), 5000);
     });
 
     this.gatewayConnection.on("GUILD_CREATE", data => {
@@ -64,13 +63,60 @@ class Client extends EventEmitter {
       if (this.guilds.has(data.id)) {
         guild = this.guilds.get(data.id);
         guild.updateData(data);
+
+        /**
+         * Emitted when a guild becomes available
+         * @event Client#guildAvailable
+         * @type {Guild}
+         */
         this.emit("guildAvailable", guild);
       } else {
         guild = new Guild(this, data);
         this.guilds.set(data.id, guild);
+
+        /**
+         * Emitted when the client joins a guild
+         * @event Client#guildCreate
+         * @type {Guild}
+         */
         this.emit("guildCreate", guild);
       }
-      this.guilds.set(data.id, guild);
+      console.log(guild);
+    });
+
+    this.gatewayConnection.on("GUILD_UPDATE", data => {
+      let guild = this.guilds.get(data.id);
+      guild.updateData(data);
+      
+      /**
+       * Emitted when a guild is updated
+       * @event Client#guildUpdate
+       * @type {Guild}
+       */
+      this.emit("guildUpdate", guild);
+    });
+
+    this.gatewayConnection.on("GUILD_DELETE", data => {
+      let guild = this.guilds.get(data.id);
+      if (typeof data.available === "undefined") {
+        this.guilds.delete(data.id);
+
+        /**
+         * Emitted when the client leaves a guild
+         * @event Client#guildDelete
+         * @type {Guild}
+         */
+        this.emit("guildDelete", guild);
+      } else {
+        guild.updateData(guild);
+
+        /**
+         * Emitted when a guild becomes unavailable
+         * @event Client#guildUnavailable
+         * @type {Guild}
+         */
+        this.emit("guildUnavailable", guild);
+      }
     });
 
   }

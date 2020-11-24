@@ -23,13 +23,7 @@ class Guild {
      */
     this.id = data.id;
 
-    /**
-     * Whether or not the guild is available.
-     * @type {boolean}
-     */
-    this.available = !data.unavailable;
-
-    if (this.available) this.updateData(data);
+    this.updateData(data);
   }
 
   /**
@@ -38,7 +32,12 @@ class Guild {
    * @private
    */
   updateData(data) {
+    /**
+     * Whether or not the guild is available.
+     * @type {boolean}
+     */
     this.available = !data.unavailable;
+
     if (!this.available) return;
 
     /**
