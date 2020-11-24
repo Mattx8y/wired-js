@@ -1,5 +1,8 @@
 const GuildEmoji = require("./GuildEmoji.js");
 const Role = require("./Role.js");
+const User = require("./User.js");
+
+const GuildSystemChannelFlags = require("./GuildSystemChannelFlags.js");
 
 /**
  * Represents a guild on Discord
@@ -12,7 +15,7 @@ class Guild {
    */
   constructor(client, data) {
     /**
-     * The client that created this Guild
+     * The client that initialized this Guild
      * @type {Client}
      */
     this.client = client;
@@ -35,6 +38,12 @@ class Guild {
      */
     this.emojis = new Map();
 
+    /**
+     * The channels in this guild
+     * @type {Map<Snowflake, GuildChannel>}
+     */
+    this.channels = new Map();
+
     this.updateData(data);
   }
 
@@ -43,7 +52,7 @@ class Guild {
    * @param {Object} data The raw guild data
    * @private
    */
-  updateData(data) {
+  async updateData(data) {
     /**
      * Whether or not the guild is available.
      * @type {boolean}
@@ -77,10 +86,16 @@ class Guild {
     this.discoverySplashHash = data.discovery_splash;
 
     /**
-     * The guild owner ID
-     * @type {string}
+     * The guild owner
+     * @type {User}
      */
-    this.ownerID = data.owner_id;
+    this.owner;
+    if (this.client.users.has(data.owner_id)) {
+      this.owner = this.client.users.get(data.owner_id);
+    } else {
+      this.owner = new User(this.client, await this.client.restManager.getUser(data.owner_id));
+      this.client.users.set(data.owner_id, this.owner);
+    }
 
     /**
      * The guild's voice region ID
@@ -104,13 +119,13 @@ class Guild {
      * Whether or not the server widget is enabled
      * @type {boolean}
      */
-    this.widgetEnabled = data.widget_enabled || false;
+    this.widgetEnabled = !!data.widget_enabled;
 
     /**
-     * The ID of the channel that the widget invite leads to, or null if set to no invite
-     * @type {?string}
+     * The channel that the widget invite leads to, or null if set to no invite
+     * @type {?GuildChannel}
      */
-    this.widgetChannelID = data.widget_channel_id;
+    this.widgetChannel = this.channels.get(data.widget_channel_id) || null;
 
     /**
      * The verification level of the guild
@@ -130,6 +145,114 @@ class Guild {
      */
     this.explicitContentFilterLevel = data.explicit_content_filter;
 
+    /**
+     * Whether or not the guild can set an invite splash background
+     * @type {boolean}
+     */
+    this.canSetInviteSplash = data.features.includes("INVITE_SPLASH");
+
+    /**
+     * Whether or not the guild can use 384kbps bitrates for voice channels
+     * @type {boolean}
+     */
+    this.canUseVIPRegions = data.features.includes("VIP_REGIONS");
+
+    /**
+     * Whether or not the guild can set a vanity invite URL
+     * @type {boolean}
+     */
+    this.canSetVanityURL = data.features.includes("VANITY_URL");
+
+    /**
+     * Whether or not the guild is verified
+     * @type {boolean}
+     */
+    this.verified = data.features.includes("VERIFIED");
+
+    /**
+     * Whether or not the guild is partnered
+     * @type {boolean}
+     */
+    this.partnered = data.features.includes("PARTNERED");
+
+    /**
+     * Whether or not the guild is a community server
+     * @type {boolean}
+     */
+    this.community = data.features.includes("COMMUNITY");
+
+    /**
+     * Whether or not the guild can use commerce features
+     * @type {boolean}
+     */
+    this.commerce = data.features.includes("COMMERCE");
+
+    /**
+     * Whether or not the guild can create news channels
+     * @type {boolean}
+     */
+    this.canCreateNewsChannels = data.features.includes("NEWS");
+
+    /**
+     * Whether or not the guild is in the discovery
+     * @type {boolean}
+     */
+    this.discoverable = data.features.includes("DISCOVERABLE");
+
+    /**
+     * Whether or not the guild can be featured in the discovery
+     * @type {boolean}
+     */
+    this.featureable = data.features.includes("FEATUREABLE");
+
+    /**
+     * Whether or not the guild can set an animated icon
+     * @type {boolean}
+     */
+    this.canSetAnimatedIcon = data.features.includes("ANIMATED_ICON");
+
+    /**
+     * Whether or not the guild can set a banner
+     * @type {boolean}
+     */
+    this.canSetBanner = data.features.includes("BANNER");
+
+    /**
+     * Whether or not the guild has the welcome screen enabled
+     * @type {boolean}
+     */
+    this.welcomeScreenEnabled = data.features.includes("WELCOME_SCREEN_ENABLED");
+
+    /**
+     * The required MFA level of the guild
+     * @type {GuilfMFALevel}
+     */
+    this.mfaLevel = data.mfa_level;
+
+    /**
+     * ID of the application that created this, or null if it wasn't created by a bot
+     * @type {?Snowflake}
+     */
+    this.applicationID = data.application_id;
+
+    /**
+     * The system channel, or null if one isn't set
+     * @type {?Snowflake}
+     */
+    this.systemChannel = this.channels.get(data.system_channel_id) || null;
+
+    /**
+     * Whether or not join notificaitons are shown in the system channel
+     * @type {boolean}
+     */
+    this.joinMessages = (data.system_channel_flags & GuildSystemChannelFlags.SUPPRESS_JOIN_NOTIFICATIONS) !== GuildSystemChannelFlags.SUPPRESS_JOIN_NOTIFICATIONS;
+
+    /**
+     * Whether or not boost notificaitons are shown in the system channel
+     * @type {boolean}
+     */
+    this.boostMessages = (data.system_channel_flags & GuildSystemChannelFlags.SUPPRESS_PREMIUM_SUBSCRIPTIONS) !== GuildSystemChannelFlags.SUPPRESS_PREMIUM_SUBSCRIPTIONS;
+
     data.roles.forEach(role => {
       if (this.roles.has(role.id)) {
         this.roles.get(role.id).updateData(role);
@@ -145,6 +268,8 @@ class Guild {
         this.emojis.set(emoji.id, new GuildEmoji(this.client, this, emoji));
       };
     });
+
+    console.log(this);    
   }
 }
 

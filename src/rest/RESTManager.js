@@ -58,6 +58,15 @@ class RESTManager {
   getGatewayBot() {
     return this.request("/gateway/bot");
   }
+
+  /**
+   * GETs /users/<userID>
+   * @param {Snowflake|string} userID The user's ID, or `@me` for the current user
+   * @returns {Promise<Object>} The response
+   */
+  getUser(userID) {
+    return this.request(`/users/${userID}`);
+  }
 }
 
 module.exports = RESTManager;

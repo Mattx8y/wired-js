@@ -92,7 +92,6 @@ class Client extends EventEmitter {
          */
         this.emit("guildCreate", guild);
       }
-      console.log(guild);
     });
 
     this.gatewayConnection.on("GUILD_UPDATE", data => {
