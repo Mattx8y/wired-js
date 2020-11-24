@@ -24,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Client.html">Client</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Client.html#login">login</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Guild.html">Guild</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Permissions.html">Permissions</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Role.html">Role</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ShardManager.html">ShardManager</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ShardManager.html#start">start</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#GuildDefaultMessageNotificationLevel">GuildDefaultMessageNotificationLevel</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#GuildExplicitContentFilterLevel">GuildExplicitContentFilterLevel</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#GuildVerificationLevel">GuildVerificationLevel</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#Intents">Intents</a></span></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Client.html">Client</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Client.html#login">login</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Guild.html">Guild</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Permissions.html">Permissions</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Permissions.html#has">has</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Role.html">Role</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ShardManager.html">ShardManager</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ShardManager.html#start">start</a></span></li><li class="nav-heading">Events</li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="Client.html#event:guildAvailable">guildAvailable</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="Client.html#event:guildCreate">guildCreate</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="Client.html#event:guildDelete">guildDelete</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="Client.html#event:guildUnavailable">guildUnavailable</a></span></li><li class="nav-heading"><span class="nav-item-type type-event">E</span><span class="nav-item-name"><a href="Client.html#event:guildUpdate">guildUpdate</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#GuildDefaultMessageNotificationLevel">GuildDefaultMessageNotificationLevel</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#GuildExplicitContentFilterLevel">GuildExplicitContentFilterLevel</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#GuildVerificationLevel">GuildVerificationLevel</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#Intents">Intents</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#PermissionFlags">PermissionFlags</a></span></li>
 </nav>
 
 <div id="main">
@@ -39,7 +39,9 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
+            <pre class="prettyprint source linenums"><code>const PermissionFlags = require("./PermissionFlags");
+
+/**
  * Represents permissions on Discord
  * @extends {Array}
  */
@@ -50,53 +52,26 @@ class Permissions extends Array {
    */
   constructor(bitwise) {
     super();
+    /**
+     * The raw permissions integer
+     * @type {number}
+     */
     this.bitwise = bitwise;
-    for (let flag in Permissions.flags) {
-      if ((bitwise &amp; Permissions.flags[flag]) === Permissions.flags[flag]) {
-        this.push(Permissions.flags[flag]);
+
+    for (let flag in PermissionFlags) {
+      if ((bitwise &amp; PermissionFlags[flag]) === PermissionFlags[flag]) {
+        this.push(PermissionFlags[flag]);
       }
     }
   }
-}
 
-/**
- * List of permissions
- * @readyonly
- * @enum
- * @static
- */
-Permissions.flags = {
-  CREATE_INSTANT_INVITE: 0x1,
-  KICK_MEMBERS: 0x2,
-  BAN_MEMBERS: 0x4,
-  ADMINISTRATOR: 0x8,
-  MANAGE_CHANNELS: 0x10,
-  MANAGE_GUILD: 0x20,
-  ADD_REACTIONS: 0x40,
-  VIEW_AUDIT_LOG: 0x80,
-  PRIORITY_SPEAKER: 0x100,
-  STREAM: 0x200,
-  VIEW_CHANNEL: 0x400,
-  SEND_MESSAGES: 0x800,
-  SEND_TTS_MESSAGES: 0x1000,
-  MANAGE_MESSAGES: 0x2000,
-  EMBED_LINKS: 0x4000,
-  ATTACH_FILES: 0x8000,
-  READ_MESSAGE_HISTORY: 0x10000,
-  MENTION_EVERYONE: 0x20000,
-  USE_EXTERNAL_EMOJIS: 0x40000,
-  VIEW_GUILD_INSIGHTS: 0x80000,
-  CONNECT: 0x100000,
-  SPEAK: 0x200000,
-  MUTE_MEMBERS: 0x400000,
-  DEAFEN_MEMBERS: 0x800000,
-  MOVE_MEMBERS: 0x1000000,
-  USE_VAD: 0x2000000,
-  CHANGE_NICKNAME: 0x4000000,
-  MANAGE_NICKNAMES: 0x8000000,
-  MANAGE_ROLES: 0x10000000,
-  MANAGE_WEBHOOKS: 0x20000000,
-  MANAGE_EMOJIS: 0x40000000
+  /**
+   * Check if this has a specific permission
+   * @param {PermissionFlags} permission The permission to check
+   */
+  has(permission) {
+    return this.includes(permission) || this.includes(PermissionFlags.ADMINISTRATOR);
+  }
 }
 
 module.exports = Permissions;</code></pre>
@@ -111,7 +86,7 @@ module.exports = Permissions;</code></pre>
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Mon Nov 23 2020 20:21:51 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Tue Nov 24 2020 15:57:23 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
