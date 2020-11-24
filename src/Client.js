@@ -67,7 +67,7 @@ class Client extends EventEmitter {
         /**
          * Emitted when a guild becomes available
          * @event Client#guildAvailable
-         * @type {Guild}
+         * @param {Guild} guild The guild
          */
         this.emit("guildAvailable", guild);
       } else {
@@ -77,7 +77,7 @@ class Client extends EventEmitter {
         /**
          * Emitted when the client joins a guild
          * @event Client#guildCreate
-         * @type {Guild}
+         * @param {Guild} guild The guild
          */
         this.emit("guildCreate", guild);
       }
@@ -91,7 +91,7 @@ class Client extends EventEmitter {
       /**
        * Emitted when a guild is updated
        * @event Client#guildUpdate
-       * @type {Guild}
+       * @param {Guild} guild The guild
        */
       this.emit("guildUpdate", guild);
     });
@@ -104,7 +104,7 @@ class Client extends EventEmitter {
         /**
          * Emitted when the client leaves a guild
          * @event Client#guildDelete
-         * @type {Guild}
+         * @param {Guild} guild The guild
          */
         this.emit("guildDelete", guild);
       } else {
@@ -113,7 +113,7 @@ class Client extends EventEmitter {
         /**
          * Emitted when a guild becomes unavailable
          * @event Client#guildUnavailable
-         * @type {Guild}
+         * @param {Guild} guild The guild
          */
         this.emit("guildUnavailable", guild);
       }
