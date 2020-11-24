@@ -1,8 +1,7 @@
 /**
  * List of permissions
  * @readyonly
- * @enum
- * @type {number}
+ * @enum {number}
  */
 PermissionFlags = {
   /**

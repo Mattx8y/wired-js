@@ -4,8 +4,17 @@
  * @enum
  */
 const GuildExplicitContentFilterLevel = {
+  /**
+   * Don't scan messages for explicit content
+   */
   DISABLED: 0,
-  MEMBERS_WITH_ROLES: 1,
+  /**
+   * Only scan messages by members without roles for explicit content
+   */
+  MEMBERS_WITHOUT_ROLES: 1,
+  /**
+   * Scan all messages for explicit content
+   */
   ALL_MEMBERS: 2
 }
 
