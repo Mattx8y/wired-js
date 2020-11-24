@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>struct/Role.js - Documentation</title>
+    <title>struct/GuildMFALevel.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">struct/Role.js</h1>
+    <h1 class="page-title">struct/GuildMFALevel.js</h1>
     
 
     
@@ -39,91 +39,23 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>const Permissions = require("./Permissions.js");
-
-/**
- * Represents a Role
+            <pre class="prettyprint source linenums"><code>/**
+ * List of guild MFA levels
+ * @enum {number}
+ * @readonly
  */
-class Role {
+const GuildMFALevels = {
   /**
-   * Creates a role
-   * @param {Client} client The client that created this role
-   * @param {Guild} guild The guild this role belongs to
-   * @param {Object} data The role's data
+   * Elevated permissions don't require MFA
    */
-  constructor(client, guild, data) {
-    /**
-     * The client that initialized this Role
-     * @type {Client}
-     */
-    this.client = client;
-
-    /**
-     * The guild that this role belongs to
-     * @type {Guild}
-     */
-    this.guild = guild;
-
-    /**
-     * The ID of the role
-     * @type {Snowflake}
-     */
-    this.id = data.id;
-
-    this.updateData(data);
-  }
-
+  NONE: 0,
   /**
-   * Updates a role's data with new information
-   * @param {Object} data The raw data
-   * @private
+   * Elevated permissions require MFA
    */
-  updateData(data) {
-    /**
-     * The name of the role
-     * @type {string}
-     */
-    this.name = data.name;
-
-    /**
-     * The hex code for the color of the role, or null if it doesn't have a color
-     * @type {?string}
-     */
-    this.color = data.color === 0 ? null : data.color.toString(16);
-
-    /**
-     * Whether or not the role is hoisted
-     * @type {boolean}
-     */
-    this.hoisted = data.hoist;
-
-    /**
-     * The position of the role
-     * @type {number}
-     */
-    this.position = data.position;
-
-    /**
-     * The permissions this role has
-     * @type {Permissions&lt;PermissionFlags>}
-     */
-    this.permissions = new Permissions(data.permissions);
-
-    /**
-     * Whether this role is managed by an integration
-     * @type {boolean}
-     */
-    this.managed = data.managed;
-
-    /**
-     * Whether this role can be mentioned by everyone
-     * @type {boolean}
-     */
-    this.mentionable = data.mentionable;
-  }
+  ELEVATED: 1
 }
 
-module.exports = Role;</code></pre>
+module.exports = GuildMFALevels;</code></pre>
         </article>
     </section>
 
