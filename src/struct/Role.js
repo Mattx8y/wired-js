@@ -25,7 +25,7 @@ class Role {
 
     /**
      * The ID of the role
-     * @type {string}
+     * @type {Snowflake}
      */
     this.id = data.id;
 

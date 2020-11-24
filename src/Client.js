@@ -11,6 +11,11 @@ const Guild = require("./struct/Guild.js");
  */
 
 /**
+ * Twitter Snowflake, used for IDs on Discord
+ * @typedef {string} Snowflake
+ */
+
+/**
  * The main Client class
  */
 class Client extends EventEmitter {
@@ -48,7 +53,7 @@ class Client extends EventEmitter {
 
     /**
      * The guilds the client is in
-     * @type {Map<Guild>}
+     * @type {Map<Snowflake,Guild>}
      */
     this.guilds = new Map();
 

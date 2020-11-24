@@ -19,7 +19,7 @@ class Guild {
 
     /**
      * The ID of the guild
-     * @type {string}
+     * @type {Snowflake}
      */
     this.id = data.id;
 
@@ -120,13 +120,13 @@ class Guild {
 
     /**
      * The roles in this guild
-     * @type {Map<string, Role>}
+     * @type {Map<Snowflake, Role>}
      */
     this.roles = new Map(data.roles.map(role => [role.id, new Role(this.client, this, role)]));
 
     /**
      * The emojis in this guild
-     * @type {Map<string, Emoji>}
+     * @type {Map<Snowflake, Emoji>}
      */
     this.roles = new Map(data.emojis.map(emoji => [emoji.id, new Emoji(this.client, this, emoji)]));
   }

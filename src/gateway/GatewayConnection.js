@@ -46,7 +46,7 @@ class GatewayConnection extends EventEmitter {
 
     /**
      * The zlib inflate used for compression
-     * @type {?Inflate}
+     * @type {?ZlibSyncInflate}
      * @private
      */
     if (zlib) this.inflate = new zlib.Inflate({
@@ -58,6 +58,8 @@ class GatewayConnection extends EventEmitter {
     /**
      * Packs a packet to send
      * @method
+     * @param {Object} data The data to pack
+     * @returns {string|*} The packed data
      * @private
      */
     this.pack = erlpack ? erlpack.pack : JSON.stringify;
@@ -171,7 +173,7 @@ class GatewayConnection extends EventEmitter {
     /**
      * Emitted when the client recieves an OPCode 9 INVALID_SESSION payload
      * @event GatewayConnection#INVALID_SESSION
-     * @type {boolean}
+     * @param {boolean} canResume Whether or not the client can resume
      * @private
      */
     this.emit("INVALID_SESSION", data.d);
@@ -189,15 +191,15 @@ class GatewayConnection extends EventEmitter {
     /**
      * Emitted when the client recieves an OPCode 10 HELLO payload
      * @event GatewayConnection#HELLO
-     * @type {Object}
-     * @property {string} heartbeat_interval The heartbeat interval in milliseconds
+     * @param {Object} data The heartbeat data
+     * @param {string} data.heartbeat_interval The heartbeat interval in milliseconds
      * @private
      */
     this.emit("HELLO", data.d);
 
     /**
      * The heartbeat interval
-     * @type {number}
+     * @type {Interval}
      * @private
      */
     this.heartbeatInterval = setInterval(this.heartbeat.bind(this), data.d.heartbeat_interval);
