@@ -145,8 +145,6 @@ class Guild {
         this.emojis.set(emoji.id, new GuildEmoji(this.client, this, emoji));
       };
     });
-
-    this.emojis = new Map(data.emojis.map(emoji => [emoji.id, new Emoji(this.client, this, emoji)]));
   }
 }
 
