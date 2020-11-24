@@ -1,4 +1,4 @@
-const Emoji = require("./Emoji.js");
+const GuildEmoji = require("./GuildEmoji.js");
 const Role = require("./Role.js");
 
 /**
@@ -22,6 +22,18 @@ class Guild {
      * @type {Snowflake}
      */
     this.id = data.id;
+
+    /**
+     * The roles in this guild
+     * @type {Map<Snowflake, Role>}
+     */
+    this.roles = new Map();
+
+    /**
+     * The emojis in this guild
+     * @type {Map<Snowflake, GuildEmoji>}
+     */
+    this.emojis = new Map();
 
     this.updateData(data);
   }
@@ -118,17 +130,23 @@ class Guild {
      */
     this.explicitContentFilterLevel = data.explicit_content_filter;
 
-    /**
-     * The roles in this guild
-     * @type {Map<Snowflake, Role>}
-     */
-    this.roles = new Map(data.roles.map(role => [role.id, new Role(this.client, this, role)]));
+    data.roles.forEach(role => {
+      if (this.roles.has(role.id)) {
+        this.roles.get(role.id).updateData(role);
+      } else {
+        this.roles.set(role.id, new Role(this.client, this, role));
+      };
+    });
 
-    /**
-     * The emojis in this guild
-     * @type {Map<Snowflake, Emoji>}
-     */
-    this.roles = new Map(data.emojis.map(emoji => [emoji.id, new Emoji(this.client, this, emoji)]));
+    data.emojis.forEach(emoji => {
+      if (this.emojis.has(emoji.id)) {
+        this.emojis.get(emoji.id).updateData(emoji);
+      } else {
+        this.emojis.set(emoji.id, new GuildEmoji(this.client, this, emoji));
+      };
+    });
+
+    this.emojis = new Map(data.emojis.map(emoji => [emoji.id, new Emoji(this.client, this, emoji)]));
   }
 }
 

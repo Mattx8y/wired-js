@@ -53,9 +53,15 @@ class Client extends EventEmitter {
 
     /**
      * The guilds the client is in
-     * @type {Map<Snowflake,Guild>}
+     * @type {Map<Snowflake, Guild>}
      */
     this.guilds = new Map();
+
+    /**
+     * All the users that the client has cached
+     * @type {Map<Snowflake, User>}
+     */
+    this.users = new Map();
 
     this.gatewayConnection.on("READY", data => {
       data.guilds.forEach(guild => {
